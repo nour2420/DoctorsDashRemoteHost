@@ -8,7 +8,7 @@
         <div class="flex flex-col gap-3 mb-4 md:flex-row md:items-center md:justify-between">
             <div>
                 <h2 class="text-[25px] font-semibold">Total Users</h2>
-                <p class="text-[15px] text-slate-400">Manage Roles , Reportes and Filter By Type</p>
+                <p class="text-[15px] text-slate-400">Manage Roles , Cases and Filter By Type</p>
             </div>
             <div class="flex items-center gap-2">
                 <input id="usersSearch" type="text" placeholder="Search name / email / phone"

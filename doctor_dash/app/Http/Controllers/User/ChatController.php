@@ -130,6 +130,74 @@ class ChatController extends Controller
         return redirect()->route('user.chats.group');
     }
 
+    public function doctorMessages(Request $request, User $doctor)
+    {
+        abort_unless(in_array($doctor->role, ['admin', 'assistant'], true), 404);
+
+        $currentUser = $request->user();
+        $afterId = (int) $request->query('after_id', 0);
+
+        $conversation = $this->findOrCreateDoctorConversation($currentUser, $doctor);
+
+        $messages = $conversation->messages()
+            ->with('sender')
+            ->when($afterId > 0, function ($q) use ($afterId) {
+                $q->where('id', '>', $afterId);
+            })
+            ->orderBy('created_at')
+            ->get();
+
+        return response()->json([
+            'ok' => true,
+            'messages' => $messages->map(function ($m) use ($currentUser) {
+                return [
+                    'id' => $m->id,
+                    'body' => $m->body,
+                    'created_at' => optional($m->created_at)->toIso8601String(),
+                    'created_at_label' => optional($m->created_at)->format('g:i A d/m'),
+                    'sender_id' => $m->sender_id,
+                    'sender_name' => optional($m->sender)->name,
+                    'is_self' => $m->sender_id === $currentUser->id,
+                ];
+            })->values(),
+        ]);
+    }
+
+    public function groupMessages(Request $request)
+    {
+        $currentUser = $request->user();
+        $afterId = (int) $request->query('after_id', 0);
+
+        $conversation = Conversation::firstOrCreate([
+            'type' => 'user_doctors_group',
+            'admin_id' => $currentUser->id,
+            'participant_id' => $currentUser->id,
+        ]);
+
+        $messages = $conversation->messages()
+            ->with('sender')
+            ->when($afterId > 0, function ($q) use ($afterId) {
+                $q->where('id', '>', $afterId);
+            })
+            ->orderBy('created_at')
+            ->get();
+
+        return response()->json([
+            'ok' => true,
+            'messages' => $messages->map(function ($m) use ($currentUser) {
+                return [
+                    'id' => $m->id,
+                    'body' => $m->body,
+                    'created_at' => optional($m->created_at)->toIso8601String(),
+                    'created_at_label' => optional($m->created_at)->format('g:i A d/m'),
+                    'sender_id' => $m->sender_id,
+                    'sender_name' => optional($m->sender)->name,
+                    'is_self' => $m->sender_id === $currentUser->id,
+                ];
+            })->values(),
+        ]);
+    }
+
     protected function findOrCreateDoctorConversation(User $user, User $doctor): Conversation
     {
         $conversation = Conversation::where('type', 'admin_user')

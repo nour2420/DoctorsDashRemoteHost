@@ -54,11 +54,11 @@
                         } elseif ($path === 'user' || $path === 'user/') {
                             $pageLabel = 'User dashboard';
                         } elseif (\Illuminate\Support\Str::startsWith($path, 'user/reports')) {
-                            $pageLabel = 'User reports';
+                            $pageLabel = 'User cases';
                         } elseif (\Illuminate\Support\Str::startsWith($path, 'user/chats/doctors')) {
-                            $pageLabel = 'User chat with doctors';
+                            $pageLabel = 'User chat with admin';
                         } elseif ($path === 'user/chats/group') {
-                            $pageLabel = 'User doctors group chat';
+                            $pageLabel = 'User admin group chat';
                         } elseif ($path === 'login') {
                             $pageLabel = 'Login page';
                         } elseif ($path === 'register') {
@@ -74,7 +74,7 @@
             @if (isset($reports) && $reports->isNotEmpty())
                 <div class="mt-4 pt-3 border-t border-slate-800/80">
                     <h3 class="text-xs font-semibold mb-2 text-slate-200 flex items-center justify-between">
-                        <span>Recent reports</span>
+                        <span>Recent cases</span>
                         <a href="{{ route('admin.users.reports', $user) }}" class="text-[11px] text-amber-300 hover:text-amber-200">View all</a>
                     </h3>
                     <ul class="space-y-1">

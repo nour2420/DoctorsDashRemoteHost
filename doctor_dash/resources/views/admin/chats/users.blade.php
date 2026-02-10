@@ -59,14 +59,14 @@
                         <p class="text-slate-400 text-xs md:text-sm">User</p>
                     </div>
                 </div>
-                <div class="flex-1 overflow-y-auto px-5 py-4 space-y-4 text-sm">
+                <div id="bh-chat-messages" class="flex-1 overflow-y-auto px-5 py-4 space-y-4 text-sm" data-last-message-id="{{ optional($messages->last())->id ?? 0 }}" data-poll-url="{{ route('admin.chats.users.messages', $activeUser) }}">
                     @foreach ($messages as $message)
                         <div
                             class="flex {{ $message->sender_id === auth()->id() ? 'justify-end' : 'justify-start' }}">
                             <div
-                                class="max-w-md rounded-2xl px-4 py-3 border {{ $message->sender_id === auth()->id() ? 'bg-white text-black border-white/30' : 'bg-black/40 text-white border-white/15' }}">
+                                class="max-w-md rounded-2xl px-4 py-3 border {{ $message->sender_id === auth()->id() ? 'bg-yellow-400 text-black border-yellow-300/60' : 'bg-blue-500/15 text-white border-blue-400/30' }}">
                                 <p>{{ $message->body }}</p>
-                                <p class="mt-1 text-[11px] font-semibold {{ $message->sender_id === auth()->id() ? 'text-black/60' : 'text-white/60' }}">
+                                <p class="mt-1 text-[11px] font-semibold {{ $message->sender_id === auth()->id() ? 'text-black/60' : 'text-blue-200/80' }}">
                                     {{ $message->created_at->format('g:i A d/m') }}</p>
                             </div>
                         </div>
@@ -75,7 +75,7 @@
                 <form method="POST" action="{{ route('admin.chats.users.send', $activeUser) }}" class="border-t border-slate-800 px-5 py-4 flex gap-3 text-sm">
                     @csrf
                     <input type="text" name="body" class="flex-1 rounded-lg border border-slate-700 bg-slate-950/80 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-amber-400" placeholder="Type a message...">
-                    <button type="submit" class="rounded-lg bg-white px-5 py-3 font-semibold text-sm text-black hover:bg-slate-200">Send</button>
+                    <button type="submit" class="inline-flex items-center justify-center rounded-full bg-yellow-400 px-5 py-3 font-semibold text-sm text-black hover:bg-yellow-300 transition-colors">Send</button>
                 </form>
             @else
                 <div class="flex-1 flex items-center justify-center text-sm text-slate-400">
@@ -106,6 +106,73 @@
                     }
                 });
             });
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var wrap = document.getElementById('bh-chat-messages');
+            if (!wrap) return;
+
+            function shouldAutoScroll() {
+                return (wrap.scrollTop + wrap.clientHeight) >= (wrap.scrollHeight - 40);
+            }
+
+            function renderMessage(msg) {
+                var outer = document.createElement('div');
+                outer.className = 'flex ' + (msg.is_self ? 'justify-end' : 'justify-start');
+
+                var bubble = document.createElement('div');
+                bubble.className = 'max-w-md rounded-2xl px-4 py-3 border ' + (msg.is_self ? 'bg-yellow-400 text-black border-yellow-300/60' : 'bg-blue-500/15 text-white border-blue-400/30');
+
+                var body = document.createElement('p');
+                body.textContent = msg.body;
+
+                var time = document.createElement('p');
+                time.className = 'mt-1 text-[11px] font-semibold ' + (msg.is_self ? 'text-black/60' : 'text-blue-200/80');
+                time.textContent = msg.created_at_label || '';
+
+                bubble.appendChild(body);
+                bubble.appendChild(time);
+                outer.appendChild(bubble);
+                return outer;
+            }
+
+            async function poll() {
+                var url = wrap.getAttribute('data-poll-url');
+                if (!url) return;
+
+                var lastId = parseInt(wrap.getAttribute('data-last-message-id') || '0', 10);
+                var auto = shouldAutoScroll();
+
+                try {
+                    var res = await fetch(url + '?after_id=' + lastId, {
+                        headers: {
+                            'Accept': 'application/json',
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    });
+
+                    if (!res.ok) return;
+                    var data = await res.json();
+                    if (!data || !data.ok || !Array.isArray(data.messages)) return;
+
+                    if (data.messages.length) {
+                        data.messages.forEach(function(m) {
+                            wrap.appendChild(renderMessage(m));
+                            lastId = Math.max(lastId, parseInt(m.id, 10));
+                        });
+                        wrap.setAttribute('data-last-message-id', String(lastId));
+                        if (auto) {
+                            wrap.scrollTop = wrap.scrollHeight;
+                        }
+                    }
+                } catch (e) {
+                    // ignore
+                }
+            }
+
+            wrap.scrollTop = wrap.scrollHeight;
+            setInterval(poll, 2000);
         });
     </script>
 @endpush

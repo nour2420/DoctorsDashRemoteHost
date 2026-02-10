@@ -10,8 +10,19 @@ use Illuminate\Support\Str;
 
 class DashboardController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
+        $current = $request->user();
+        $role = $current ? $current->role : 'admin';
+        $welcomeKey = 'welcomed_' . $role;
+
+        if (! $request->session()->has($welcomeKey)) {
+            $request->session()->put($welcomeKey, true);
+            $label = $role === 'assistant' ? 'Assistant' : 'Admin';
+            $name = $current ? $current->name : '';
+            $request->session()->flash('welcome', 'Welcome back, ' . $label . ($name ? ' ' . $name : '') . '!');
+        }
+
         $totalUsers = User::count();
         $totalAdmins = User::where('role', 'admin')->count();
         $totalAssistants = User::where('role', 'assistant')->count();

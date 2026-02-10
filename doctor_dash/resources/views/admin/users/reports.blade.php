@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
-@section('title', 'User Reports')
-@section('header', 'User Reports')
+@section('title', 'User Cases')
+@section('header', 'User Cases')
 
 @section('content')
     <div class="space-y-6">
@@ -14,7 +14,7 @@
 
         <div class="rounded-2xl bg-slate-900/80 border border-slate-700/70 p-5 text-xs">
             <div class="flex items-center justify-between mb-4">
-                <h2 class="text-sm font-semibold">Reports</h2>
+                <h2 class="text-sm font-semibold">Cases</h2>
                 <div class="flex items-center gap-3">
                     <form method="GET" action="{{ route('admin.users.reports', $user) }}" class="flex items-center gap-2">
                         <span class="text-[11px] text-slate-400">Filter:</span>
@@ -32,7 +32,7 @@
             </div>
 
             @if ($reports->isEmpty())
-                <p class="text-slate-400 text-xs">No reports uploaded by this user.</p>
+                <p class="text-slate-400 text-xs">No cases uploaded by this user.</p>
             @else
                 <div class="overflow-x-auto">
                     <table class="min-w-full text-left text-xs">

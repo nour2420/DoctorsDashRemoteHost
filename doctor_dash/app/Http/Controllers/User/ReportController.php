@@ -57,7 +57,15 @@ class ReportController extends Controller
             ]);
         }
 
-        return redirect()->route('user.reports.index')->with('status', 'Report uploaded successfully.');
+        if ($request->expectsJson()) {
+            return response()->json([
+                'ok' => true,
+                'redirect' => route('user.reports.index'),
+                'message' => 'Case uploaded successfully.',
+            ]);
+        }
+
+        return redirect()->route('user.reports.index')->with('status', 'Case uploaded successfully.');
     }
 
     public function edit(Request $request, Report $report)
@@ -103,7 +111,15 @@ class ReportController extends Controller
         $report->description = $data['description'] ?? null;
         $report->save();
 
-        return redirect()->route('user.reports.index')->with('status', 'Report updated successfully.');
+        if ($request->expectsJson()) {
+            return response()->json([
+                'ok' => true,
+                'redirect' => route('user.reports.index'),
+                'message' => 'Case updated successfully.',
+            ]);
+        }
+
+        return redirect()->route('user.reports.index')->with('status', 'Case updated successfully.');
     }
 
     public function destroy(Request $request, Report $report)
@@ -118,6 +134,14 @@ class ReportController extends Controller
 
         $report->delete();
 
-        return redirect()->route('user.reports.index')->with('status', 'Report deleted successfully.');
+        if ($request->expectsJson()) {
+            return response()->json([
+                'ok' => true,
+                'redirect' => route('user.reports.index'),
+                'message' => 'Case deleted successfully.',
+            ]);
+        }
+
+        return redirect()->route('user.reports.index')->with('status', 'Case deleted successfully.');
     }
 }

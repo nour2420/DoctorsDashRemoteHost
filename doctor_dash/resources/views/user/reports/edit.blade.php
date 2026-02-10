@@ -1,11 +1,11 @@
 @extends('layouts.user')
 
-@section('title', 'Edit report')
-@section('header', 'Edit report')
+@section('title', 'Edit case')
+@section('header', 'Edit case')
 
 @section('content')
     <div class="max-w-xl mx-auto rounded-2xl bg-slate-900/80 border border-slate-700/70 p-6 text-xs">
-        <h2 class="text-base md:text-lg font-semibold mb-4">Edit report</h2>
+        <h2 class="text-base md:text-lg font-semibold mb-4">Edit case</h2>
 
         @if ($errors->any())
             <div class="mb-4 rounded-lg border border-red-500/40 bg-red-500/10 px-3 py-2 text-xs text-red-200">
@@ -21,7 +21,7 @@
             @csrf
             @method('PUT')
             <div>
-                <label for="title" class="block mb-1">Title</label>
+                <label for="title" class="block mb-1">Patient Name</label>
                 <input id="title" name="title" type="text" value="{{ old('title', $report->title) }}" required
                     class="w-full rounded-lg border border-slate-600 bg-slate-950/60 px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-amber-400">
             </div>
@@ -41,7 +41,7 @@
             </div>
             <button type="submit"
                 class="inline-flex items-center justify-center rounded-lg bg-amber-400 px-4 py-2 text-xs font-semibold text-black hover:bg-amber-300 transition-colors">Update
-                report</button>
+                case</button>
         </form>
     </div>
 @endsection

@@ -355,6 +355,73 @@
             });
         })();
     </script>
+    @if (session('welcome'))
+        <div id="bh-welcome-toast" class="fixed top-5 right-5 z-[9999] w-[min(92vw,360px)]">
+            <div class="rounded-2xl border border-amber-400/35 bg-black/80 backdrop-blur-xl px-4 py-3 shadow-2xl">
+                <div class="flex items-start gap-3">
+                    <div class="mt-0.5 h-9 w-9 rounded-xl bg-amber-400/15 border border-amber-400/35 flex items-center justify-center text-amber-200 font-bold text-sm">BH</div>
+                    <div class="flex-1 min-w-0">
+                        <p class="text-[11px] uppercase tracking-[0.18em] text-slate-400">Welcome</p>
+                        <p class="mt-0.5 text-sm font-semibold text-slate-100">{{ session('welcome') }}</p>
+                    </div>
+                    <button type="button" id="bh-welcome-toast-close" class="text-slate-400 hover:text-amber-200 text-xs">✕</button>
+                </div>
+                <div class="mt-3 h-1.5 w-full rounded-full bg-white/10 overflow-hidden">
+                    <div id="bh-welcome-toast-bar" class="h-full w-full bg-amber-400/70"></div>
+                </div>
+            </div>
+        </div>
+        <script>
+            (function () {
+                var toast = document.getElementById('bh-welcome-toast');
+                var closeBtn = document.getElementById('bh-welcome-toast-close');
+                var bar = document.getElementById('bh-welcome-toast-bar');
+                if (!toast || !closeBtn || !bar) return;
+
+                var duration = 4500;
+                var started = Date.now();
+                var raf;
+
+                function tick() {
+                    var elapsed = Date.now() - started;
+                    var left = Math.max(0, 1 - (elapsed / duration));
+                    bar.style.width = (left * 100) + '%';
+                    if (elapsed >= duration) {
+                        toast.remove();
+                        return;
+                    }
+                    raf = requestAnimationFrame(tick);
+                }
+
+                function close() {
+                    if (raf) cancelAnimationFrame(raf);
+                    toast.remove();
+                }
+
+                closeBtn.addEventListener('click', close);
+                tick();
+            })();
+        </script>
+    @endif
+    <script>
+        (function () {
+            function applyLoading(btn) {
+                if (!btn || btn.dataset.bhLoadingApplied === '1') return;
+                btn.dataset.bhLoadingApplied = '1';
+                btn.dataset.bhOriginalHtml = btn.innerHTML;
+                btn.disabled = true;
+                btn.classList.add('bg-yellow-400', 'text-black', 'opacity-90', 'cursor-not-allowed');
+                btn.innerHTML = '<span class="inline-flex items-center gap-2"><svg class="h-4 w-4 animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path></svg><span>Loading...</span></span>';
+            }
+
+            document.addEventListener('submit', function (e) {
+                var form = e.target;
+                if (!form || !form.querySelector) return;
+                var btn = form.querySelector('button[type="submit"]');
+                applyLoading(btn);
+            }, true);
+        })();
+    </script>
     @stack('scripts')
 </body>
 

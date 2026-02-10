@@ -6,7 +6,7 @@
 @section('content')
     <div class="space-y-4">
         <div class="rounded-2xl bg-slate-900/80 border border-slate-700/70 p-4">
-            <h2 class="text-sm font-semibold text-slate-200 mb-3">Messages from doctors</h2>
+            <h2 class="text-sm font-semibold text-slate-200 mb-3">Messages from admin</h2>
 
             @forelse ($doctorNotifications as $doctor)
                 <a href="{{ route('user.chats.doctors.show', $doctor->id) }}"
@@ -34,7 +34,7 @@
                     </span>
                 </a>
             @empty
-                <p class="text-xs text-slate-500">No new messages from doctors.</p>
+                <p class="text-xs text-slate-500">No new messages from admin.</p>
             @endforelse
         </div>
     </div>

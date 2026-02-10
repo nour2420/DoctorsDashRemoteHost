@@ -168,16 +168,19 @@ Route::middleware(['auth', 'role:admin,assistant'])
         Route::get('/chats/assistants', [ChatController::class, 'assistants'])->name('chats.assistants');
         Route::get('/chats/assistants/{assistant}', [ChatController::class, 'assistantConversation'])->name('chats.assistants.show');
         Route::post('/chats/assistants/{assistant}', [ChatController::class, 'sendToAssistant'])->name('chats.assistants.send');
+        Route::get('/chats/assistants/{assistant}/messages', [ChatController::class, 'assistantMessages'])->name('chats.assistants.messages');
 
         // Chats with users
         Route::get('/chats/users', [ChatController::class, 'users'])->name('chats.users');
         Route::get('/chats/users/{user}', [ChatController::class, 'userConversation'])->name('chats.users.show');
         Route::post('/chats/users/{user}', [ChatController::class, 'sendToUser'])->name('chats.users.send');
+        Route::get('/chats/users/{user}/messages', [ChatController::class, 'userMessages'])->name('chats.users.messages');
 
         // Group chats with users (user-doctors groups)
         Route::get('/chats/groups', [ChatController::class, 'userGroups'])->name('chats.groups');
         Route::get('/chats/groups/{user}', [ChatController::class, 'userGroupConversation'])->name('chats.groups.show');
         Route::post('/chats/groups/{user}', [ChatController::class, 'sendToUserGroup'])->name('chats.groups.send');
+        Route::get('/chats/groups/{user}/messages', [ChatController::class, 'userGroupMessages'])->name('chats.groups.messages');
 
         // Notifications for admins and assistants
         Route::get('/notifications', [ChatController::class, 'notifications'])->name('notifications.index');
@@ -202,10 +205,12 @@ Route::middleware(['auth', 'role:user'])
         Route::get('/chats/doctors', [UserChatController::class, 'doctors'])->name('chats.doctors');
         Route::get('/chats/doctors/{doctor}', [UserChatController::class, 'doctorConversation'])->name('chats.doctors.show');
         Route::post('/chats/doctors/{doctor}', [UserChatController::class, 'sendToDoctor'])->name('chats.doctors.send');
+        Route::get('/chats/doctors/{doctor}/messages', [UserChatController::class, 'doctorMessages'])->name('chats.doctors.messages');
 
         // Group chat with all doctors
         Route::get('/chats/group', [UserChatController::class, 'groupConversation'])->name('chats.group');
         Route::post('/chats/group', [UserChatController::class, 'sendToGroup'])->name('chats.group.send');
+        Route::get('/chats/group/messages', [UserChatController::class, 'groupMessages'])->name('chats.group.messages');
 
         // User notifications
         Route::get('/notifications', [UserChatController::class, 'notifications'])->name('notifications.index');
