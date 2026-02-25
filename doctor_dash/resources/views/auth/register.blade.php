@@ -11,6 +11,11 @@
         body {
             font-family: "IBM Plex Sans", "IBM Plex Sans Arabic", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
         }
+        /* Hide browser default password reveal button */
+        input::-ms-reveal,
+        input::-ms-clear {
+            display: none;
+        }
     </style>
 </head>
 
@@ -42,15 +47,53 @@
                     <input id="email" name="email" type="email" required autocomplete="email" value="{{ old('email') }}" class="w-full rounded-lg border border-white/15 bg-black/40 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-white/30 focus:border-white/30 placeholder:text-white/40">
                 </div>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <div>
+                    <div class="relative">
                         <label for="password" class="block text-sm mb-1">Password</label>
-                        <input id="password" name="password" type="password" required autocomplete="new-password" class="w-full rounded-lg border border-white/15 bg-black/40 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-white/30 focus:border-white/30 placeholder:text-white/40">
+                        <div class="relative">
+                            <input id="password" name="password" type="password" required autocomplete="new-password" class="w-full rounded-lg border border-white/15 bg-black/40 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-white/30 focus:border-white/30 placeholder:text-white/40 pr-10">
+                            <button type="button" onclick="togglePassword('password')" class="absolute inset-y-0 right-0 flex items-center pr-3 text-white/70 hover:text-white transition-colors z-20 bg-transparent border-none outline-none">
+                                <svg id="password-hide" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                </svg>
+                                <svg id="password-show" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.542-7 1.274-4.057 5.064-7 9.542-7 1.225 0 2.37.22 3.42.615m4.73 4.73C20.575 10.895 21 12 21 12c-1.274 4.057-5.064 7-9.542 7-1.225 0-2.37-.22-3.42-.615M9.88 9.88l4.24 4.24M3 3l18 18" />
+                                </svg>
+                            </button>
+                        </div>
                     </div>
-                    <div>
+                    <div class="relative">
                         <label for="password_confirmation" class="block text-sm mb-1">Confirm password</label>
-                        <input id="password_confirmation" name="password_confirmation" type="password" required autocomplete="new-password" class="w-full rounded-lg border border-white/15 bg-black/40 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-white/30 focus:border-white/30 placeholder:text-white/40">
+                        <div class="relative">
+                            <input id="password_confirmation" name="password_confirmation" type="password" required autocomplete="new-password" class="w-full rounded-lg border border-white/15 bg-black/40 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-white/30 focus:border-white/30 placeholder:text-white/40 pr-10">
+                            <button type="button" onclick="togglePassword('password_confirmation')" class="absolute inset-y-0 right-0 flex items-center pr-3 text-white/70 hover:text-white transition-colors z-20 bg-transparent border-none outline-none">
+                                <svg id="password_confirmation-hide" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                </svg>
+                                <svg id="password_confirmation-show" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.542-7 1.274-4.057 5.064-7 9.542-7 1.225 0 2.37.22 3.42.615m4.73 4.73C20.575 10.895 21 12 21 12c-1.274 4.057-5.064 7-9.542 7-1.225 0-2.37-.22-3.42-.615M9.88 9.88l4.24 4.24M3 3l18 18" />
+                                </svg>
+                            </button>
+                        </div>
                     </div>
                 </div>
+                <script>
+                    function togglePassword(id) {
+                        const input = document.getElementById(id);
+                        const hideIcon = document.getElementById(id + '-hide');
+                        const showIcon = document.getElementById(id + '-show');
+                        if (input.type === 'password') {
+                            input.type = 'text';
+                            hideIcon.classList.add('hidden');
+                            showIcon.classList.remove('hidden');
+                        } else {
+                            input.type = 'password';
+                            hideIcon.classList.remove('hidden');
+                            showIcon.classList.add('hidden');
+                        }
+                    }
+                </script>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
                         <label for="address" class="block text-sm mb-1">Address (optional)</label>

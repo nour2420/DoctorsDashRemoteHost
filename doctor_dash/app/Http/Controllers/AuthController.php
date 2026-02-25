@@ -67,9 +67,10 @@ class AuthController extends Controller
         if (Auth::attempt($credentials, $remember)) {
             $request->session()->regenerate();
             $user = Auth::user();
-            $redirectTo = in_array($user->role, ['admin', 'assistant'], true)
+            $redirectTo = in_array($user->role, ['admin', 'assistant', 'admin_assistant'], true)
                 ? route('admin.dashboard')
                 : route('user.dashboard');
+
 
             return redirect()->intended($redirectTo);
         }
@@ -99,9 +100,10 @@ class AuthController extends Controller
             ]);
         }
 
-        $redirectTo = in_array($user->role, ['admin', 'assistant'], true)
-            ? route('admin.dashboard')
-            : route('user.dashboard');
+        $redirectTo = in_array($user->role, ['admin', 'assistant', 'admin_assistant'], true)
+            ? '/admin'
+            : '/user';
+
 
         return response()->json([
             'authenticated' => true,

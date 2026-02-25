@@ -14,20 +14,19 @@
     </style>
 </head>
 
-<body class="min-h-screen bg-black bg-gradient-to-b from-black via-slate-900 to-black text-white flex items-center justify-center px-4">
+<body class="min-h-screen bg-black text-white flex items-center justify-center px-4" style="background: radial-gradient(1200px 600px at 18% 0%, rgba(255,255,255,0.06), transparent 60%), radial-gradient(900px 500px at 85% 20%, rgba(255,255,255,0.04), transparent 65%), #060606;">
     <div class="w-full max-w-md">
         <div class="mb-8 text-center"></div>
-        <div class="bg-slate-900/70 border border-slate-700/80 rounded-2xl shadow-xl shadow-amber-500/10 p-6 sm:p-8 backdrop-blur">
+        <div class="border border-white/15 rounded-2xl shadow-xl p-6 sm:p-8 backdrop-blur" style="background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02)); box-shadow: 0 18px 55px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.06);">
             <h1 class="text-2xl font-semibold mb-2">Check your email</h1>
             <p class="text-sm text-slate-300 mb-2">We have sent a 6-digit code to <span class="font-semibold">{{ $email }}</span>.</p>
-            <p class="text-xs text-slate-400 mb-4">Enter the code below. The code is valid for 2 minutes.</p>
+            <p class="text-xs text-slate-400 mb-6">Enter the code below. The code is valid for 2 minutes.</p>
 
             @if (session('status'))
                 <div class="mb-4 rounded-lg border border-emerald-500/40 bg-emerald-500/10 px-3 py-2 text-xs text-emerald-200">
                     {{ session('status') }}
                 </div>
             @endif
-
 
             @if ($errors->any())
                 <div class="mb-4 rounded-lg border border-red-500/40 bg-red-500/10 px-3 py-2 text-xs text-red-200">
@@ -44,20 +43,31 @@
                 <input type="hidden" name="email" value="{{ $email }}">
                 <div>
                     <label for="code" class="block text-sm mb-1">6-digit code</label>
-                    <input id="code" name="code" type="text" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" required class="w-full tracking-[0.35em] text-center rounded-lg border border-slate-600 bg-slate-900/60 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-amber-400 placeholder:text-slate-500">
+                    <input id="code" name="code" type="text" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" required 
+                        class="w-full tracking-[0.35em] text-center rounded-lg border border-white/15 bg-black/40 px-4 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-white/30 focus:border-white/30 placeholder:text-white/40">
                 </div>
-                <button type="submit" class="w-full mt-2 inline-flex items-center justify-center rounded-lg bg-amber-400 px-4 py-2.5 text-sm font-semibold text-black shadow-lg shadow-amber-500/40 hover:bg-amber-300 transition-colors">Verify code</button>
+                <button type="submit" class="w-full mt-2 inline-flex items-center justify-center rounded-lg bg-white px-4 py-2.5 text-sm font-semibold text-black shadow-lg hover:bg-white/90 transition-colors">
+                    Verify code
+                </button>
             </form>
 
-            <div class="mt-4 flex items-center justify-between text-xs text-slate-300">
+            <div class="mt-6 flex items-center justify-between text-xs text-slate-400">
                 <span id="bh-otp-timer" data-remaining="{{ $remainingSeconds }}"></span>
-                <button type="submit" form="bh-otp-resend-form" id="bh-otp-resend-btn" class="text-amber-300 hover:text-amber-200 disabled:opacity-50 disabled:cursor-not-allowed">Resend code</button>
+                <button type="submit" form="bh-otp-resend-form" id="bh-otp-resend-btn" 
+                    class="text-white hover:text-white/90 font-medium disabled:opacity-30 disabled:cursor-not-allowed transition-opacity">Resend code</button>
             </div>
 
             <form method="POST" action="{{ route('password.otp.resend') }}" id="bh-otp-resend-form" class="hidden">
                 @csrf
                 <input type="hidden" name="email" value="{{ $email }}">
             </form>
+
+            <div class="mt-8 pt-6 border-t border-white/5 text-center">
+                <p class="text-xs text-slate-300">
+                    Remembered your password?
+                    <a href="{{ route('login') }}" class="text-white hover:text-white/90 font-medium">Back to login</a>
+                </p>
+            </div>
         </div>
     </div>
 

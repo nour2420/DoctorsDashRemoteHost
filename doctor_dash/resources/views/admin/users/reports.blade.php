@@ -68,20 +68,15 @@
                                             class="text-[11px] text-amber-300 hover:text-amber-200">{{ $report->original_name }}</a>
                                     </td>
                                     <td class="py-2 pr-4 text-right">
-                                        <div class="flex items-center justify-end gap-2">
-                                            <form method="POST" action="{{ route('admin.reports.review', $report) }}">
-                                                @csrf
-                                                @method('PATCH')
-                                                <input type="hidden" name="state" value="reviewed" />
-                                                <button type="submit" class="bh-btn bh-btn--review">تمت المراجعة</button>
-                                            </form>
-                                            <form method="POST" action="{{ route('admin.reports.review', $report) }}">
-                                                @csrf
-                                                @method('PATCH')
-                                                <input type="hidden" name="state" value="pending" />
-                                                <button type="submit" class="bh-btn bh-btn--unreview">في انتظار المراجعة</button>
-                                            </form>
-                                        </div>
+                                        <form method="POST" action="{{ route('admin.reports.review', $report) }}">
+                                            @csrf
+                                            @method('PATCH')
+                                            <select name="state" onchange="this.form.submit()"
+                                                class="rounded-full border border-amber-400/50 bg-slate-950/70 px-4 py-1 text-[11px] font-semibold text-slate-100 focus:outline-none focus:ring-1 focus:ring-amber-400 focus:border-amber-400 transition-all cursor-pointer">
+                                                <option value="pending" @selected(!$report->reviewed_at)>Pending</option>
+                                                <option value="reviewed" @selected($report->reviewed_at)>Reviewed</option>
+                                            </select>
+                                        </form>
                                     </td>
                                 </tr>
                             @endforeach
@@ -95,4 +90,10 @@
             @endif
         </div>
     </div>
+
+    <script>
+        (function() {
+            // No custom logic needed for native select
+        })();
+    </script>
 @endsection

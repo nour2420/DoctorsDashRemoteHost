@@ -130,8 +130,9 @@ class UserController extends Controller
     public function reports(User $user)
     {
         $review = request()->query('review');
+        // If not provided, default to all cases
         if ($review === null) {
-            $review = 'pending';
+            $review = null;
         }
         $query = $user->reports()->latest();
 
@@ -140,6 +141,7 @@ class UserController extends Controller
         } elseif ($review === 'reviewed') {
             $query->whereNotNull('reviewed_at');
         } else {
+            // Keep $review as null for 'all' cases
             $review = null;
         }
 

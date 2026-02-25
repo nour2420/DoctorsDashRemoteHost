@@ -44,6 +44,8 @@
                                 </td>
                                 <td class="py-2 px-2">
                                     <div class="flex gap-2">
+                                        <a href="{{ route('user.reports.download', $report) }}"
+                                            class="rounded-full border border-blue-500/60 px-3 py-1 text-[11px] font-semibold text-blue-300 hover:bg-blue-500/10 transition-colors">Download</a>
                                         <a href="{{ route('user.reports.edit', $report) }}"
                                             class="rounded-full border border-slate-600/70 px-3 py-1 text-[11px] font-semibold text-slate-200 hover:border-amber-400 hover:text-amber-300 transition-colors">Edit</a>
                                         <form action="{{ route('user.reports.destroy', $report) }}" method="POST"

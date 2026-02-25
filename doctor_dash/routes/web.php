@@ -147,7 +147,8 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::get('/auth/status', [AuthController::class, 'status'])->name('auth.status');
 
 // Admin & assistants area
-Route::middleware(['auth', 'role:admin,assistant'])
+Route::middleware(['auth', 'role:admin,assistant,admin_assistant'])
+
     ->prefix('admin')
     ->name('admin.')
     ->group(function () {
@@ -199,6 +200,7 @@ Route::middleware(['auth', 'role:user'])
         Route::post('/reports', [UserReportController::class, 'store'])->name('reports.store');
         Route::get('/reports/{report}/edit', [UserReportController::class, 'edit'])->name('reports.edit');
         Route::put('/reports/{report}', [UserReportController::class, 'update'])->name('reports.update');
+        Route::get('/reports/{report}/download', [UserReportController::class, 'download'])->name('reports.download');
         Route::delete('/reports/{report}', [UserReportController::class, 'destroy'])->name('reports.destroy');
 
         // Chats with doctors (admins + assistants)

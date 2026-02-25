@@ -12,13 +12,18 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        \App\Models\User::factory(10)->create();
+        // Cleanup non-admin users to prevent duplicates or unwanted static users
+        \App\Models\User::where('role', '!=', 'admin')->delete();
 
-        \App\Models\User::factory()->create([
-            'name' => 'Admin',
-            'email' => 'admin@admin.com',
-            'password' => bcrypt('12345678'),
-            'role' => 'admin',
-        ]);
+        // Ensure only one admin exists
+        \App\Models\User::updateOrCreate(
+            ['email' => 'admin@admin.com'],
+            [
+                'name' => 'Admin',
+                'password' => bcrypt('12345678'),
+                'role' => 'admin',
+            ]
+        );
     }
+
 }

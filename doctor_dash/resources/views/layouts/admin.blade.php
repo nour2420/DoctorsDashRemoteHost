@@ -180,10 +180,55 @@
         [class*="text-gray-"] { color: var(--bh-text) !important; }
         [class*="border-slate-"] { border-color: var(--bh-border) !important; }
         [class*="border-gray-"] { border-color: var(--bh-border) !important; }
+
+        @keyframes bhFadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .bh-page-animate {
+            animation: bhFadeIn 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+        }
+
+        /* Global Loading Overlay */
+        #bh-global-loading {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            background: rgba(6, 6, 6, 0.7);
+            backdrop-filter: blur(12px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        #bh-global-loading.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .bh-loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            border-top-color: rgba(255, 255, 255, 0.9);
+            border-radius: 50%;
+            animation: bh-spin 0.8s linear infinite;
+        }
+        @keyframes bh-spin {
+            to { transform: rotate(360deg); }
+        }
     </style>
 </head>
 
 <body class="min-h-screen text-slate-100" style="background: radial-gradient(1200px 600px at 18% 0%, rgba(255,255,255,0.06), transparent 60%), radial-gradient(900px 500px at 85% 20%, rgba(255,255,255,0.04), transparent 65%), var(--bh-bg);">
+    <div id="bh-global-loading">
+        <div class="flex flex-col items-center gap-4">
+            <div class="bh-loading-spinner"></div>
+            <p class="text-white/60 text-sm font-medium tracking-widest uppercase">Loading</p>
+        </div>
+    </div>
     <div class="min-h-screen flex">
         <div id="bh-admin-sidebar-overlay" class="hidden fixed inset-0 z-40 md:hidden" style="background: rgba(0,0,0,0.72);"></div>
         <aside id="bh-admin-sidebar" class="fixed inset-y-0 left-0 z-50 w-72 -translate-x-full md:translate-x-0 md:static md:z-auto md:flex md:w-68 flex-col border-r border-slate-800/80 bg-slate-950/95 transition-transform duration-200" style="background-color: var(--bh-surface-2);">
@@ -298,13 +343,13 @@
                         <form action="{{ route('logout') }}" method="POST">
                             @csrf
                             <button type="submit"
-                                class="rounded-full border border-slate-600/70 px-4 py-1.5 text-sm font-semibold text-slate-200 hover:border-amber-400 hover:text-amber-300 transition-colors">Logout</button>
+                                class="rounded-full border border-slate-600/70 px-4 py-1.5 text-sm font-semibold text-slate-200 hover:border-white hover:text-white transition-colors">Logout</button>
                         </form>
                     @endauth
                 </div>
             </header>
 
-            <main class="flex-1 p-4 md:p-8" style="background: transparent;">
+            <main class="flex-1 p-4 md:p-8 bh-page-animate" style="background: transparent;">
                 @if (session('status'))
                     <div
                         class="mb-4 rounded-lg border border-emerald-500/40 bg-emerald-500/10 px-4 py-3 text-xs text-emerald-200">
@@ -414,11 +459,37 @@
                 btn.innerHTML = '<span class="inline-flex items-center gap-2"><svg class="h-4 w-4 animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path></svg><span>Loading...</span></span>';
             }
 
+            function showGlobalLoading() {
+                var loader = document.getElementById('bh-global-loading');
+                if (loader) loader.classList.add('show');
+            }
+
             document.addEventListener('submit', function (e) {
                 var form = e.target;
                 if (!form || !form.querySelector) return;
                 var btn = form.querySelector('button[type="submit"]');
                 applyLoading(btn);
+
+                // Show global loading on form submit as well
+                showGlobalLoading();
+            }, true);
+
+            // Show global loading on internal link clicks
+            document.addEventListener('click', function (e) {
+                var link = e.target.closest('a');
+                if (!link) return;
+
+                var href = link.getAttribute('href');
+                if (!href || href === '#' || href.startsWith('javascript:') || link.target === '_blank') return;
+
+                // Robust internal check
+                var isInternal = href.startsWith('/') || 
+                                 href.startsWith(window.location.origin) || 
+                                 !href.includes('://'); 
+
+                if (isInternal) {
+                    showGlobalLoading();
+                }
             }, true);
         })();
     </script>

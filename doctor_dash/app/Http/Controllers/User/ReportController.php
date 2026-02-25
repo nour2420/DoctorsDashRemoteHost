@@ -40,7 +40,7 @@ class ReportController extends Controller
             'description' => ['nullable', 'string'],
             'files' => ['required', 'array'],
             // السماح بأي نوع ملف وأي حجم (الحد الفعلي يعتمد على إعدادات الخادم PHP)
-            'files.*' => ['file'],
+            'files.*' => ['file', 'max:51200'], // Added a generous 50MB limit as a safety, otherwise 'file' is fine.
         ]);
 
         foreach ($data['files'] as $file) {
@@ -143,5 +143,18 @@ class ReportController extends Controller
         }
 
         return redirect()->route('user.reports.index')->with('status', 'Case deleted successfully.');
+    }
+
+    public function download(Request $request, Report $report)
+    {
+        $user = $request->user();
+
+        abort_unless($report->user_id === $user->id, 404);
+
+        if (!$report->file_path || !Storage::disk('public')->exists($report->file_path)) {
+            abort(404);
+        }
+
+        return Storage::disk('public')->download($report->file_path, $report->original_name);
     }
 }

@@ -49,8 +49,7 @@
                         <th class="text-left py-2 px-2 text-[14px]">Address</th>
                         <th class="text-left py-2 px-2 text-[14px]">Phone</th>
                         <th class="text-left py-2 px-2 text-[14px]">Role</th>
-                        <th class="text-left py-2 px-2 text-[14px]">Status</th>
-                        <th class="text-right py-2 px-2 text-[14px]">Action</th>
+                        <th class="text-left py-2 px-2 text-[14px]">Status / Action</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -72,42 +71,26 @@
                                         {{ $user->role }} (you)
                                     </span>
                                 @else
-                                    <form method="POST" action="{{ route('admin.users.updateRole', $user) }}"
-                                        class="flex items-center gap-2">
+                                    <form method="POST" action="{{ route('admin.users.updateRole', $user) }}">
                                         @csrf
                                         @method('PATCH')
-                                        <select name="role"
-                                            class="rounded-full border border-slate-600 bg-slate-950/70 px-2 py-1 text-[11px] uppercase tracking-[0.16em] focus:outline-none focus:ring-1 focus:ring-amber-400 focus:border-amber-400">
+                                        <select name="role" onchange="this.form.submit()"
+                                            class="rounded-full border border-slate-600 bg-slate-950/70 px-2 py-1 text-[11px] uppercase tracking-[0.16em] focus:outline-none focus:ring-1 focus:ring-amber-400 focus:border-amber-400 cursor-pointer">
                                             <option value="user" @selected($user->role === 'user')>User</option>
                                             <option value="assistant" @selected($user->role === 'assistant')>Assistant</option>
                                             <option value="admin" @selected($user->role === 'admin')>Admin</option>
                                         </select>
-                                        <button type="submit"
-                                            class="rounded-full border border-slate-600/70 px-2 py-1 text-[10px] font-semibold text-slate-200 hover:border-amber-400 hover:text-amber-300 transition-colors">Save</button>
                                     </form>
                                 @endif
                             </td>
-                            <td class="py-2 px-2 text-[14px]">
-                                @php
-                                    $status = ($user->review_status ?? 'pending');
-                                @endphp
-                                @if ($status === 'reviewed')
-                                    <span class="bh-badge bh-badge--reviewed">Reviewed</span>
-                                @else
-                                    <span class="bh-badge bh-badge--pending">
-                                        Pending
-                                    </span>
-                                @endif
-                            </td>
-                            <td class="py-2 px-2 text-right">
+                            <td class="py-2 px-2">
                                 <form method="POST" action="{{ route('admin.users.reports.review', $user) }}">
                                     @csrf
                                     @method('PATCH')
-                                    <select name="state"
-                                        onchange="this.form.submit()"
-                                        class="rounded-full border border-slate-600 bg-slate-950/70 px-3 py-1 text-[11px] focus:outline-none focus:ring-1 focus:ring-amber-400 focus:border-amber-400">
-                                        <option value="pending" @selected(($user->review_status ?? 'pending') === 'pending')>Pending</option>
-                                        <option value="reviewed" @selected(($user->review_status ?? 'pending') === 'reviewed')>Reviewed</option>
+                                    <select name="state" onchange="this.form.submit()"
+                                        class="rounded-full border border-slate-600 bg-slate-950/70 px-3 py-1 text-[11px] focus:outline-none focus:ring-1 focus:ring-amber-400 focus:border-amber-400 cursor-pointer {{ ($user->review_status ?? 'pending') === 'reviewed' ? 'text-emerald-400' : 'text-amber-400' }}">
+                                        <option value="pending" @selected(($user->review_status ?? 'pending') === 'pending')>PENDING</option>
+                                        <option value="reviewed" @selected(($user->review_status ?? 'pending') === 'reviewed')>REVIEWED</option>
                                     </select>
                                 </form>
                             </td>
