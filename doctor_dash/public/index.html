@@ -207,7 +207,6 @@
 
                     // If data changed, re-render
                     if (oldDataStr !== JSON.stringify(data)) {
-                        console.log("BH AUTH: Data changed, re-rendering...");
                         if (typeof window.__bhScheduleSync === 'function') {
                             window.__bhScheduleSync();
                         }
