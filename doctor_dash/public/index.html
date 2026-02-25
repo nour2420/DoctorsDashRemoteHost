@@ -166,7 +166,6 @@
         (function () {
             const AUTH_STATUS_URL = '/auth/status?_t=' + Date.now();
             const AUTH_CACHE_KEY = 'bh_auth_status';
-            console.log("BH AUTH INIT: " + new Date().toISOString());
 
             function getDashboardButtonText(role) {
                 if (role === 'admin' || role === 'admin_assistant') return 'Go to Admin Dashboard';
